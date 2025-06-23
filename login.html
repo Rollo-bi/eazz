@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/png" href="IMG-20250323-WA0008.png" />
     <title>Login - QUICK LOANS</title>
     <link rel="stylesheet" href="style.css" />
@@ -17,7 +17,8 @@
             height: 40px;
             margin: -20px 0 0 -20px;
             border: 5px solid #f3f3f3;
-            border-top: 5px solid #007acc;
+            border-top: 5px solid #6a0dad;
+            /* changed to purple shade */
             border-radius: 50%;
             animation: spin 1s linear infinite;
             z-index: 9999;
@@ -38,7 +39,8 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #ff4f4f;
+            background-color: #9b59b6;
+            /* rich purple */
             color: white;
             padding: 12px 20px;
             border-radius: 6px;
@@ -46,33 +48,79 @@
             opacity: 0;
             transition: opacity 0.3s ease;
             z-index: 9999;
+            font-weight: 600;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            letter-spacing: 0.02em;
         }
 
         .toast.show {
             opacity: 1;
         }
+
+        .no-account {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.95em;
+            color: #3d0066;
+        }
+
+        .no-account button#creat {
+            background: linear-gradient(135deg, #7a3fff, #b085ff);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 10px 25px;
+            margin-left: 10px;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(122, 63, 255, 0.5);
+            transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .no-account button#creat:hover {
+            background: linear-gradient(135deg, #b085ff, #7a3fff);
+            box-shadow: 0 6px 20px rgba(122, 63, 255, 0.8);
+            transform: translateY(-3px);
+        }
+
+        .no-account button#creat:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(122, 63, 255, 0.4);
+        }
+
+        #centerImage {
+            max-width: 80px;
+            max-height: 80px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
 </head>
 
 <body class="login-body">
-    <div class="login-container">
-        <h2 class="title">Welcome Back</h2>
+    <div class="container">
+        <img id="centerImage" src="yooh.webp" alt="Centered Image">
 
-        <form class="login-form" id="loginForm">
+        <h2 class="title">Welcome to QUICK LOANS</h2>
+
+        <form class="login-form" id="loginForm" autocomplete="off">
             <label for="phone">Phone Number</label>
-            <input type="text" id="phone" name="phone" placeholder="Enter phone number" required />
+            <input type="tel" id="phone" name="phone" placeholder="Your phone number here" required autofocus />
 
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter password" required />
+            <input type="password" id="password" name="password" placeholder="Enter your secret password" required />
 
             <div class="forgot-password">
-                <a href="#">Forgot Password?</a>
+                <a href="#">Forgot your password? No worries.</a>
             </div>
 
-            <button type="submit" class="login-btn" id="loginBtn">Login</button>
+            <button type="submit" class="login-btn" id="loginBtn">Log Me In</button>
 
             <div class="no-account">
-                No account yet? <button type="button" id="creat">Create now</button>
+                Don’t have an account yet?
+                <button type="button" id="creat">Get Started Now</button>
             </div>
         </form>
     </div>
@@ -106,7 +154,7 @@
         function showToast(message) {
             toast.textContent = message;
             toast.classList.add("show");
-            setTimeout(() => toast.classList.remove("show"), 3000);
+            setTimeout(() => toast.classList.remove("show"), 3500);
         }
 
         document.getElementById("loginForm").addEventListener("submit", async (e) => {
@@ -114,6 +162,11 @@
 
             const phone = document.getElementById("phone").value.trim();
             const password = document.getElementById("password").value.trim();
+
+            if (!phone || !password) {
+                showToast("Please fill out all fields!");
+                return;
+            }
 
             spinner.style.display = "block";
 
@@ -123,42 +176,27 @@
 
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
-                    let loginSuccess = false;
 
-
-                    for (const key in userData) {
-                        const entry = userData[key];
-
-                        //const loan = entry.yere;
-
-
-                        if (userData.password === password) {
-
-                            if (userData.yere === "67") {
-                                sessionStorage.setItem("mpesaNumber", phone);
-                                window.location.href = "dash.html";
-                            }
-                            else if (userData.yere === "null") {
-                                sessionStorage.setItem("mpesaNumber", phone);
-                                window.location.href = "dashboard.html";
-                            }
-                            else {
-                                showToast("Create an account to continue");
-                            }
-
+                    // Assuming password is stored in userData.password, and userData.yere defines user status
+                    if (userData.password === password) {
+                        if (userData.yere === "67") {
+                            sessionStorage.setItem("mpesaNumber", phone);
+                            window.location.href = "dash.html";
+                        } else if (userData.yere === "null") {
+                            sessionStorage.setItem("mpesaNumber", phone);
+                            window.location.href = "dashboard.html";
+                        } else {
+                            showToast("Please create an account to continue.");
                         }
-                        else {
-                            showToast("Incorrect password. Please try again.");
-                        }
+                    } else {
+                        showToast("Oops! Incorrect password. Try again.");
                     }
-
-
                 } else {
-                    showToast("Account not found. Please register.");
+                    showToast("No account found. Ready to register?");
                 }
             } catch (error) {
                 console.error("Login error:", error);
-                showToast("Login failed. Please try again later.");
+                showToast("Login failed! Please check your connection and try again.");
             } finally {
                 spinner.style.display = "none";
             }
@@ -169,7 +207,7 @@
             setTimeout(() => {
                 window.location.href = "register.html";
                 spinner.style.display = "none";
-            }, 2000);
+            }, 1500);
         });
     </script>
 </body>

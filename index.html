@@ -14,11 +14,15 @@
         .loader {
             display: none;
             position: fixed;
+            /* stay fixed on screen */
             top: 50%;
+            /* halfway down the viewport */
             left: 50%;
+            /* halfway across the viewport */
+            transform: translate(-50%, -50%);
+            /* shift back by half its size */
             width: 40px;
             height: 40px;
-            margin: -20px 0 0 -20px;
             border: 5px solid #f3f3f3;
             border-top: 5px solid #007acc;
             border-radius: 50%;
@@ -55,99 +59,119 @@
             opacity: 1;
         }
 
-        .special-offer {
-            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
-            border: none;
-            padding: 25px;
+        /* Special offer section styling */
+        .section.special-offer {
+            background: linear-gradient(135deg, #d4bfff 0%, #d4bfff 100%);
+            border: 2px solid #7a3fff;
+            box-shadow: 0 0 20px #b085ff88;
+            color: #fbfafc;
+            padding: 25px 20px;
             border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
             position: relative;
             overflow: hidden;
-            animation: pulse 2s infinite;
         }
 
+        /* Badge with flickering flame */
         .badge {
-            background-color: #d63031;
-            color: white;
-            font-weight: bold;
-            padding: 6px 12px;
-            border-radius: 20px;
             display: inline-block;
-            font-size: 1rem;
-            margin-bottom: 15px;
-        }
-
-        .highlight {
+            background-color: hwb(32 0% 0%);
+            color: white;
+            padding: 10px 18px;
+            font-weight: 700;
             font-size: 1.2rem;
-            font-weight: 600;
-            color: #2d3436;
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 15px #b085ffaa;
+            animation: glowPulse 2s ease-in-out infinite;
+            cursor: default;
+            user-select: none;
+            position: relative;
         }
 
-        /* Slight pulse animation */
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
+        .badge::before {
+            content: "🔥";
+            display: inline-block;
+            margin-right: 8px;
+            animation: flameFlicker 1.5s infinite alternate;
+            transform-origin: center bottom;
+        }
+
+        /* Highlight text */
+        .highlight {
+            font-size: 1.4rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #2b035f, #2b035f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glowPulse 3s ease-in-out infinite;
+            margin-bottom: 0.5rem;
+            color: #080808;
+        }
+
+        .highlight strong {
+            font-weight: 800;
+            background: linear-gradient(90deg, #0c0c0c, #080808);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 5px #b085ff99;
+            color: #080808;
+        }
+
+        /* Subtle glow animation */
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                text-shadow:
+                    0 0 6px #c3a3ff,
+                    0 0 12px #8369b6,
+                    0 0 18px #0c0c0c;
             }
 
             50% {
-                transform: scale(1.02);
+                text-shadow:
+                    0 0 10px #d4bfff,
+                    0 0 20px #8266bb,
+                    0 0 30px #0d0d0e;
             }
-
-            100% {
-                transform: scale(1);
-            }
         }
 
-        .toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #ff4d4d;
-            color: white;
-            text-align: center;
-            border-radius: 8px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 1rem;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            transition: opacity 0.5s, visibility 0.5s;
-        }
-
-        .toast.show {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .install-btn {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #007acc;
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            font-size: 16px;
-            border-radius: 30px;
-            cursor: pointer;
-            z-index: 9999;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            animation: popUp 0.5s ease forwards;
-        }
-
-        @keyframes popUp {
+        /* Flame flicker */
+        @keyframes flameFlicker {
             0% {
-                transform: translateX(-50%) scale(0.8);
-                opacity: 0;
+                transform: rotate(0deg) scale(1);
+                opacity: 1;
+                filter: drop-shadow(0 0 3px #ff8800);
+            }
+
+            50% {
+                transform: rotate(5deg) scale(1.1);
+                opacity: 0.85;
+                filter: drop-shadow(0 0 6px #d8a052);
             }
 
             100% {
-                transform: translateX(-50%) scale(1);
+                transform: rotate(0deg) scale(1);
                 opacity: 1;
+                filter: drop-shadow(0 0 3px #d8a052);
+            }
+        }
+
+        .spinner {
+            display: none;
+            margin-left: 10px;
+            animation: spin 1s linear infinite;
+            font-size: 1.2rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
             }
         }
     </style>
@@ -155,7 +179,8 @@
 
 <body class="login-body">
     <div class="container">
-        <h1>Loans up to Ksh 60,000</h1>
+        <h1>Fast and Easy Personal Loan Solutions</h1>
+        <h4> Get the financial support you need with competitive rates and terms.</h4>
 
         <div class="section special-offer">
             <div class="badge">🔥 Special Offer!!</div>
@@ -165,25 +190,29 @@
 
 
         <div class="section">
-            <h2>Quick Loan Approval</h2>
-            <p>Get pre-approved in minutes with our streamlined digital process.</p>
+            <h2>Fast Loan Approval</h2>
+            <p>Receive your pre-approval within minutes through our efficient online system.</p>
         </div>
 
+
         <div class="section">
-            <h2>Flexible Terms</h2>
-            <p>Choose loan terms from 30 to 90 days that fit your budget</p>
+            <h2>Adaptable Repayment Plans</h2>
+            <p>Select loan durations between 30 and 90 days tailored to your financial needs.</p>
         </div>
 
         <div class="checkbox-wrapper">
             <input type="checkbox" id="agreeCheckbox" />
             <label for="agreeCheckbox">
-                I agree to receive information about loan offers and understand the Terms and Conditions
+                I consent to receive updates on loan offers and acknowledge the Terms and Conditions.
             </label>
         </div>
 
-        <button id="startBtn">Start Loan Application</button>
+        <button id="startBtn">
+            <span class="btn-text">Start Loan Application</span>
+            <span class="spinner" id="applySpinner">⏳</span>
+        </button>
 
-        <div id="loader" class="loader" style="display: none;"></div>
+        <div id="loadingSpinner" class="loader"></div>
     </div>
 
     <footer class="footer">
@@ -198,7 +227,7 @@
             deferredPrompt = e;
 
             const installButton = document.createElement('button');
-            installButton.textContent = 'TALA  LOANS\nInstall for easy follow up.';
+            installButton.textContent = 'QUICK  LOANS\nInstall for easy follow up.';
             installButton.className = 'install-btn';
 
             // Create the icon element
@@ -214,7 +243,7 @@
             // You can now append the button to the document wherever you need it
             document.body.appendChild(installButton);
 
-
+            const spinner = document.getElementById("loadingSpinner");
             installButton.addEventListener('click', () => {
                 installButton.style.display = 'none';
                 deferredPrompt.prompt();
@@ -230,20 +259,22 @@
         });
         document.getElementById('startBtn').addEventListener('click', () => {
             const checkbox = document.getElementById('agreeCheckbox');
-            const loader = document.getElementById('loader');
+            const spinner = document.getElementById('loadingSpinner');  // Fix here
 
             if (!checkbox.checked) {
                 showToast('Please agree to the terms before continuing.');
                 return;
             }
 
-            loader.style.display = 'block';
+            spinner.style.display = "block";
+            document.getElementById('applySpinner').style.display = 'inline-block';
 
             setTimeout(() => {
                 window.location.href = 'login.html';
-                loader.style.display = 'none';
+                spinner.style.display = "none";
             }, 4000);
         });
+
         function showToast(message) {
             const toast = document.getElementById('toast');
             toast.textContent = message;

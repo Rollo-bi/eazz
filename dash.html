@@ -6,20 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="IMG-20250323-WA0008.png" />
     <title>QUICK LOANS - Dashboard</title>
-    <link rel="stylesheet" href="style.css" />
     <style>
         body {
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #e0f7fa, #ffffff);
-            color: #333;
+            background: linear-gradient(to right, #f3e5f5, #ede7f6);
+            color: #4a0072;
         }
 
         header {
-            background-color: #007acc;
+            background-color: #6a1b9a;
             color: white;
             padding: 1rem 2rem;
-            text-align: center;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background-color: #d32f2f;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #b71c1c;
         }
 
         .dashboard {
@@ -35,11 +59,12 @@
         h1 {
             font-size: 1.8rem;
             margin-bottom: 1rem;
+            color: #6a1b9a;
         }
 
         .loan-box {
-            background: #f0faff;
-            border-left: 5px solid #007acc;
+            background: #f3e5f5;
+            border-left: 5px solid #8e24aa;
             padding: 1.5rem;
             border-radius: 12px;
             margin-top: 1.5rem;
@@ -49,13 +74,13 @@
         .loan-info {
             margin-top: 1rem;
             font-size: 1rem;
-            color: #555;
+            color: #4a148c;
         }
 
         .btn {
             margin-top: 2rem;
             padding: 0.75rem 1.5rem;
-            background-color: #007acc;
+            background-color: #8e24aa;
             color: white;
             border: none;
             border-radius: 8px;
@@ -63,53 +88,25 @@
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
+            transition: background-color 0.3s ease;
         }
 
         .btn:hover {
-            background-color: #005b99;
+            background-color: #6a1b9a;
         }
 
         footer {
             text-align: center;
             padding: 1rem;
             margin-top: 2rem;
-            background-color: #f0f0f0;
-            color: #777;
+            background-color: #f3e5f5;
+            color: #6a1b9a;
         }
 
         @media (max-width: 600px) {
             .dashboard {
                 padding: 1rem;
             }
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #007acc;
-            padding: 1rem 2rem;
-            color: white;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .logout-btn {
-            background-color: #ff4d4d;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #e60000;
         }
     </style>
 </head>
@@ -122,35 +119,36 @@
         </nav>
     </header>
 
-
     <div class="dashboard">
         <h1 id="welcomeMessage">Welcome, Customer 👋</h1>
 
         <div class="loan-box">
-            <p>Your loan of <strong id="pendingLoan">Loading...</strong> will be
-                disbursed within 48 hours.</p>
+            <p>Your loan of <strong id="pendingLoan">Loading...</strong> will be disbursed within 48 hours.</p>
             <div class="loan-info">
                 <p>Expected Date: <span id="dueDate">--/--/----</span></p>
                 <p>Status: <span id="status">Loading...</span></p>
             </div>
             <a class="btn" href="https://play.google.com/store/apps/details?id=com.helass.chapscha&hl=en"
-                target="_blank">Download Our App from playstore</a>
+                target="_blank">
+                Download Our App from Play Store
+            </a>
         </div>
     </div>
 
     <footer>
         &copy; 2025 QUICK LOANS. All rights reserved.
     </footer>
+
     <script>
         function logout() {
-            sessionStorage.clear(); // Clear session data
-            window.location.href = 'login.html'; // Redirect to login
+            sessionStorage.clear();
+            window.location.href = 'login.html';
         }
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-        import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCjnv5_IGHQVa5tXUBmH6FDYxBUvSREVsQ",
@@ -164,27 +162,19 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
         const phone = sessionStorage.getItem("mpesaNumber");
 
-        // Fetch the user's data from the database
         const userRef = ref(db, 'users/' + phone);
         get(userRef).then(snapshot => {
             if (snapshot.exists()) {
                 const userData = snapshot.val();
+                const loanAmount = userData.loanLimit || '0';
+                const customerName = userData.name || 'Customer';
+                const dueDate = userData.dueDate || 'in 48 hrs';
+                const status = userData.status || 'Processing';
 
-                const firstKey = Object.keys(userData)[0]; // Get first auto-generated key
-                const userData1 = userData[firstKey];
-
-                const loanAmount = userData.loanLimit || '0'; // Retrieve loan amount
-                const customerName = userData.name || 'Customer'; // Retrieve user name
-                const dueDate = userData1.dueDate || 'in 48 hrs'; // Retrieve due date
-                const status = userData1.status || 'Processing'; // Retrieve loan status
-
-                // Update the UI with the retrieved data
                 document.getElementById("pendingLoan").textContent = ` ${loanAmount}`;
                 document.getElementById("welcomeMessage").textContent = `Welcome, ${customerName} 👋`;
-                //document.getElementById("customerName").textContent = `${customerName}'s`;
                 document.getElementById("dueDate").textContent = dueDate;
                 document.getElementById("status").textContent = status;
             } else {

@@ -10,13 +10,31 @@
 </head>
 
 <body class="login-body">
-    <div class="login-container">
+    <style>
+        .spinner {
+            display: none;
+            margin-left: 10px;
+            animation: spin 1s linear infinite;
+            font-size: 1.2rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <div class="container">
         <h2 class="title">Find Your Loan Eligibility</h2>
         <p style="text-align:center; color:#555; margin-bottom: 20px;">
             We offer loans from Ksh 2,000 to 500,000 disbursed directly to M-Pesa
         </p>
 
-        <form class="login-form">
+        <form class="login-form" novalidate>
             <label for="education">Level of Education</label>
             <select id="education" name="education" required>
                 <option value="">--Select Education Level--</option>
@@ -76,17 +94,18 @@
 
             <button type="submit" class="login-btn">
                 <span class="btn-text">Submit Details</span>
-                <span class="btn-spinner" style="display:none; margin-left: 10px;">⏳</span>
+                <span class="spinner" id="applySpinner">⏳</span>
             </button>
         </form>
 
-        <div
-            style="margin-top: 30px; background-color: #e6f7ff; border-left: 4px solid #007acc; padding: 1rem; border-radius: 8px;">
-            <p style="font-weight: bold; color: #007acc;">No CRB Check, No Guarantors, No Paperwork</p>
+        <!-- Info box block using your class -->
+        <div class="info-box" style="margin-top: 30px;">
+            <p>No CRB Check, No Guarantors, No Paperwork</p>
             <p>Loans disbursed directly to your M-Pesa account.</p>
         </div>
 
-        <p style="margin-top: 20px; font-size: 0.9em; text-align:center; color: #555;">
+        <!-- Terms and conditions -->
+        <p class="terms" style="margin-top: 20px; font-size: 0.9em; text-align:center; color: #555;">
             By submitting you confirm that you accept the
             <a href="#" style="color:#007acc; text-decoration:none; font-weight:bold;">Terms and Conditions</a>
             and
@@ -107,10 +126,10 @@
 
                 const button = form.querySelector('button');
                 const btnText = button.querySelector('.btn-text');
-                const spinner = button.querySelector('.btn-spinner');
+
 
                 btnText.textContent = 'Submitting...';
-                spinner.style.display = 'inline-block';
+                document.getElementById('applySpinner').style.display = 'inline-block';
                 button.disabled = true;
 
                 setTimeout(() => {
