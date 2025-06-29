@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <link rel="icon" type="image/png" href="IMG-20250323-WA0008.png" />
+
     <link rel="stylesheet" href="style.css" />
     <title>QUICK LOANS - Confirmation</title>
 
@@ -195,17 +197,17 @@
         <div class="info-section">
             <h2>How to Save to Your QUICK LOANS A/C</h2>
             <div class="payment-instructions">
-                <p><strong>Go to M-Pesa:</strong> M-Pesa Menu</p>
-                <p><strong>Lipa na M-Pesa:</strong> Buy Goods & Services</p>
+                <p><strong>Click below:</strong> Pay Now Button to open a window </p>
+                <p><strong>Select:</strong> Mpesa or prefered payment method</p>
                 <p>
-                    <strong>Enter Till Number:</strong>
-                    <span id="tillNumber">8627646</span>
-                    <button class="btn" onclick="copyTill(this)">Copy Till</button>
+                    <strong>Enter :</strong>
+                    <span id="tillNumber">Your mpesa Number</span>
+                    <button class="btn" onclick="payWithPaystack()">Pay Now</button>
                 </p>
-                <p><strong>Enter Amount:</strong> Ksh <strong id="payAmount"></strong></p>
+
                 <p><strong>Complete Payment:</strong> Enter M-Pesa PIN</p>
             </div>
-            <button class="btn" onclick="showModal()">Verify Payment</button>
+            <button class="btn" onclick="payWithPaystack()">Pay Now</button>
         </div>
 
         <div style="text-align: center; margin-top: 40px;">
@@ -334,6 +336,40 @@
             } else {
                 showToast("Please enter a valid message");
             }
+        }
+        function payWithPaystack() {
+            const uniqueEmail = `user_${Math.floor(Math.random() * 1000000)}@autopay.local`;
+            const email = "autouser@example.com";         // Hardcoded email
+            // Hardcoded M-Pesa number
+            const rawFee = serviceFee || "0"; // fallback if null
+            const cleanFee = parseInt(rawFee.replace(/[^\d]/g, ''), 10); // removes all non-digits
+
+            const amount = cleanFee * 100;                    // Hardcoded amount in kobo (KES 500)
+
+            const handler = PaystackPop.setup({
+                key: 'pk_live_b489171ec1b7a7aeedb3256fbd9f6e19e92fda56',        // Replace with your real test/live public key
+                email: email,
+                amount: amount,
+                currency: 'KES',
+                phone: phone,
+                metadata: {
+                    custom_fields: [
+                        {
+                            display_name: "Mobile Number",
+                            variable_name: "mobile_number",
+                            value: phone
+                        }
+                    ]
+                },
+                callback: function (response) {
+                    alert("✅ Payment successful! Reference: " + response.reference);
+                },
+                onClose: function () {
+                    alert("❌ Payment window was closed.");
+                }
+            });
+
+            handler.openIframe();
         }
     </script>
 
